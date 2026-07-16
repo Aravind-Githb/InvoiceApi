@@ -1,0 +1,204 @@
+{
+  "invoices": [
+    {
+      "invoiceNumber": "INV1001",
+      "customerName": "ABC Pvt Ltd",
+      "invoiceAmount": 12000,
+      "currency": "INR",
+      "invoiceDate": "2026-06-01",
+      "dueDate": "2026-06-30",
+      "paymentStatus": "Paid",
+      "disputeStatus": "Closed"
+    },
+    {
+      "invoiceNumber": "INV1002",
+      "customerName": "Infosys Ltd",
+      "invoiceAmount": 21000,
+      "currency": "INR",
+      "invoiceDate": "2026-06-03",
+      "dueDate": "2026-07-03",
+      "paymentStatus": "Pending",
+      "disputeStatus": "Open"
+    },
+    {
+      "invoiceNumber": "INV1003",
+      "customerName": "Microsoft India",
+      "invoiceAmount": 15000,
+      "currency": "USD",
+      "invoiceDate": "2026-06-05",
+      "dueDate": "2026-07-05",
+      "paymentStatus": "Rejected",
+      "disputeStatus": "Escalated"
+    },
+    {
+      "invoiceNumber": "INV1004",
+      "customerName": "NextGen Logistics",
+      "invoiceAmount": 9500,
+      "currency": "EUR",
+      "invoiceDate": "2026-06-12",
+      "dueDate": "2026-07-12",
+      "paymentStatus": "Overdue",
+      "disputeStatus": "In Review"
+    },
+    {
+      "invoiceNumber": "INV1005",
+      "customerName": "Tata Consultancy Services",
+      "invoiceAmount": 18000,
+      "currency": "INR",
+      "invoiceDate": "2026-06-14",
+      "dueDate": "2026-07-14",
+      "paymentStatus": "Pending",
+      "disputeStatus": "Open"
+    },
+    {
+      "invoiceNumber": "INV1006",
+      "customerName": "Amazon India",
+      "invoiceAmount": 27500,
+      "currency": "USD",
+      "invoiceDate": "2026-06-15",
+      "dueDate": "2026-07-15",
+      "paymentStatus": "Paid",
+      "disputeStatus": "Closed"
+    },
+    {
+      "invoiceNumber": "INV1007",
+      "customerName": "Reliance Industries",
+      "invoiceAmount": 33000,
+      "currency": "INR",
+      "invoiceDate": "2026-06-16",
+      "dueDate": "2026-07-16",
+      "paymentStatus": "Pending",
+      "disputeStatus": "In Review"
+    },
+    {
+      "invoiceNumber": "INV1008",
+      "customerName": "Accenture",
+      "invoiceAmount": 14200,
+      "currency": "USD",
+      "invoiceDate": "2026-06-17",
+      "dueDate": "2026-07-17",
+      "paymentStatus": "Overdue",
+      "disputeStatus": "Open"
+    },
+    {
+      "invoiceNumber": "INV1009",
+      "customerName": "Capgemini",
+      "invoiceAmount": 19500,
+      "currency": "EUR",
+      "invoiceDate": "2026-06-18",
+      "dueDate": "2026-07-18",
+      "paymentStatus": "Paid",
+      "disputeStatus": "Closed"
+    },
+    {
+      "invoiceNumber": "INV1010",
+      "customerName": "HCL Technologies",
+      "invoiceAmount": 24000,
+      "currency": "INR",
+      "invoiceDate": "2026-06-19",
+      "dueDate": "2026-07-19",
+      "paymentStatus": "Pending",
+      "disputeStatus": "Escalated"
+    },
+    {
+      "invoiceNumber": "INV1011",
+      "customerName": "Oracle Corporation",
+      "invoiceAmount": 41000,
+      "currency": "USD",
+      "invoiceDate": "2026-06-20",
+      "dueDate": "2026-07-20",
+      "paymentStatus": "Rejected",
+      "disputeStatus": "Open"
+    },
+    {
+      "invoiceNumber": "INV1012",
+      "customerName": "Deloitte",
+      "invoiceAmount": 22000,
+      "currency": "EUR",
+      "invoiceDate": "2026-06-21",
+      "dueDate": "2026-07-21",
+      "paymentStatus": "Paid",
+      "disputeStatus": "Closed"
+    },
+    {
+      "invoiceNumber": "INV1013",
+      "customerName": "EY Global",
+      "invoiceAmount": 17000,
+      "currency": "USD",
+      "invoiceDate": "2026-06-22",
+      "dueDate": "2026-07-22",
+      "paymentStatus": "Pending",
+      "disputeStatus": "Open"
+    },
+    {
+      "invoiceNumber": "INV1014",
+      "customerName": "KPMG",
+      "invoiceAmount": 31000,
+      "currency": "INR",
+      "invoiceDate": "2026-06-23",
+      "dueDate": "2026-07-23",
+      "paymentStatus": "Overdue",
+      "disputeStatus": "In Review"
+    },
+    {
+      "invoiceNumber": "INV1015",
+      "customerName": "PwC India",
+      "invoiceAmount": 19800,
+      "currency": "INR",
+      "invoiceDate": "2026-06-24",
+      "dueDate": "2026-07-24",
+      "paymentStatus": "Paid",
+      "disputeStatus": "Closed"
+    },
+    {
+      "invoiceNumber": "INV1016",
+      "customerName": "Tech Mahindra",
+      "invoiceAmount": 13400,
+      "currency": "INR",
+      "invoiceDate": "2026-06-25",
+      "dueDate": "2026-07-25",
+      "paymentStatus": "Pending",
+      "disputeStatus": "Open"
+    },
+    {
+      "invoiceNumber": "INV1017",
+      "customerName": "Cisco Systems",
+      "invoiceAmount": 45500,
+      "currency": "USD",
+      "invoiceDate": "2026-06-26",
+      "dueDate": "2026-07-26",
+      "paymentStatus": "Rejected",
+      "disputeStatus": "Escalated"
+    },
+    {
+      "invoiceNumber": "INV1018",
+      "customerName": "Samsung Electronics",
+      "invoiceAmount": 26500,
+      "currency": "KRW",
+      "invoiceDate": "2026-06-27",
+      "dueDate": "2026-07-27",
+      "paymentStatus": "Pending",
+      "disputeStatus": "In Review"
+    },
+    {
+      "invoiceNumber": "INV1019",
+      "customerName": "Siemens",
+      "invoiceAmount": 28750,
+      "currency": "EUR",
+      "invoiceDate": "2026-06-28",
+      "dueDate": "2026-07-28",
+      "paymentStatus": "Overdue",
+      "disputeStatus": "Open"
+    },
+    {
+      "invoiceNumber": "INV1020",
+      "customerName": "Bosch India",
+      "invoiceAmount": 16000,
+      "currency": "INR",
+      "invoiceDate": "2026-06-29",
+      "dueDate": "2026-07-29",
+      "paymentStatus": "Paid",
+      "disputeStatus": "Closed"
+    }
+  ]
+}

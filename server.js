@@ -1,5 +1,8 @@
 const express = require("express");
 const fs = require("fs");
+const axios = require("axios");
+const basicAuth = require("express-basic-auth");
+require("dotenv").config();
 
 const app = express();
 
@@ -8,8 +11,24 @@ app.use(express.json());
 const data = JSON.parse(fs.readFileSync("invoices.json", "utf8"));
 
 
+app.use(
+    basicAuth({
+        users: {
+            [process.env.API_USERNAME]: process.env.API_PASSWORD
+        },
+        challenge: true
+    })
+);
 
 const invoices = data.invoices;
+
+// =====================================
+// Workflow Configuration
+// =====================================
+
+const WORKFLOW_API_URL = process.env.WORKFLOW_API_URL;
+const WORKFLOW_DEFINITION_ID = process.env.WORKFLOW_DEFINITION_ID;
+const WORKFLOW_ENVIRONMENT_ID = process.env.WORKFLOW_ENVIRONMENT_ID;
 
 
 
@@ -144,6 +163,71 @@ app.post("/analyzeDispute", (req, res) => {
     res.json(response);
 
 });
+
+
+// =====================================
+// Trigger SAP Build Process
+// =====================================
+
+app.post("/startWorkflow", async (req, res) => {
+
+    try {
+
+        const {
+            invoiceNumber,
+            customerComplaint
+        } = req.body;
+
+        const payload = {
+
+            definitionId: WORKFLOW_DEFINITION_ID,
+
+            context: {
+
+                invoiceNumber,
+                customerComplaint
+
+            }
+
+        };
+
+        const response = await axios.post(
+
+            `${WORKFLOW_API_URL}?environmentId=${WORKFLOW_ENVIRONMENT_ID}`,
+
+            payload,
+
+            {
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            }
+
+        );
+
+        res.json({
+            message: "Workflow Started Successfully",
+            workflowResponse: response.data
+        });
+
+    } catch (error) {
+
+        console.error(error.response?.data || error.message);
+
+        res.status(500).json({
+
+            message: "Unable to start workflow",
+
+            error:
+                error.response?.data ||
+                error.message
+
+        });
+
+    }
+
+});
+
 
 app.listen(3000, () => {
     console.log("Server running on port 3000");

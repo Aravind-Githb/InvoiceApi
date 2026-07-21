@@ -182,7 +182,7 @@ app.post("/startWorkflow", async (req, res) => {
         //=====================================
         // Step 1: Get OAuth Access Token
         //=====================================
-
+        console.log("Getting OAuth Token...");
         const tokenResponse = await axios.post(
 
             WORKFLOW_API_URL,
@@ -200,7 +200,7 @@ app.post("/startWorkflow", async (req, res) => {
             }
 
         );
-
+        console.log("OAuth Token Received");
         const accessToken = tokenResponse.data.access_token;
 
         console.log("OAuth Token Retrieved Successfully");
@@ -225,6 +225,7 @@ app.post("/startWorkflow", async (req, res) => {
         //=====================================
         // Step 3: Start Workflow
         //=====================================
+        console.log("Calling Workflow API...");
 
         const response = await axios.post(
 
@@ -253,6 +254,8 @@ app.post("/startWorkflow", async (req, res) => {
             workflowResponse: response.data
 
         });
+
+        console.log("Workflow Started");
 
     } catch (error) {
 

@@ -216,7 +216,7 @@ app.post("/startWorkflow", async (req, res) => {
 
         res.status(500).json({
 
-            message: "Unable to start workflow",
+            message: "Unable to start the workflow",
 
             error:
                 error.response?.data ||

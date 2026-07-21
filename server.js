@@ -213,6 +213,13 @@ app.post("/startWorkflow", async (req, res) => {
     } catch (error) {
 
         console.error(error.response?.data || error.message);
+        console.log("WORKFLOW_API_URL:", WORKFLOW_API_URL);
+        console.log("WORKFLOW_DEFINITION_ID:", WORKFLOW_DEFINITION_ID);
+        console.log("WORKFLOW_ENVIRONMENT_ID:", WORKFLOW_ENVIRONMENT_ID);
+
+        const finalUrl =`${WORKFLOW_API_URL}?environmentId=${WORKFLOW_ENVIRONMENT_ID}`;
+
+console.log("Calling:", finalUrl);
 
         res.status(500).json({
 

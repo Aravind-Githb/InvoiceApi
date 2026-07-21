@@ -29,7 +29,8 @@ const invoices = data.invoices;
 const WORKFLOW_API_URL = process.env.WORKFLOW_API_URL;
 const WORKFLOW_DEFINITION_ID = process.env.WORKFLOW_DEFINITION_ID;
 const WORKFLOW_ENVIRONMENT_ID = process.env.WORKFLOW_ENVIRONMENT_ID;
-
+const API_USERNAME = process.env.API_USERNAME;
+const API_PASSWORD = process.env.API_PASSWORD;
 
 
 // Home
@@ -178,6 +179,36 @@ app.post("/startWorkflow", async (req, res) => {
             customerComplaint
         } = req.body;
 
+        //=====================================
+        // Step 1: Get OAuth Access Token
+        //=====================================
+
+        const tokenResponse = await axios.post(
+
+            
+
+            "grant_type=client_credentials",
+
+            {
+                auth: {
+                    username: API_USERNAME,
+                    password: API_PASSWORD
+                },
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                }
+            }
+
+        );
+
+        const accessToken = tokenResponse.data.access_token;
+
+        console.log("OAuth Token Retrieved Successfully");
+
+        //=====================================
+        // Step 2: Prepare Workflow Payload
+        //=====================================
+
         const payload = {
 
             definitionId: WORKFLOW_DEFINITION_ID,
@@ -191,6 +222,10 @@ app.post("/startWorkflow", async (req, res) => {
 
         };
 
+        //=====================================
+        // Step 3: Start Workflow
+        //=====================================
+
         const response = await axios.post(
 
             `${WORKFLOW_API_URL}?environmentId=${WORKFLOW_ENVIRONMENT_ID}`,
@@ -198,28 +233,41 @@ app.post("/startWorkflow", async (req, res) => {
             payload,
 
             {
+
                 headers: {
+
+                    Authorization: `Bearer ${accessToken}`,
+
                     "Content-Type": "application/json"
+
                 }
+
             }
 
         );
 
         res.json({
+
             message: "Workflow Started Successfully",
+
             workflowResponse: response.data
+
         });
 
     } catch (error) {
 
+        console.error("Workflow Error:");
+
         console.error(error.response?.data || error.message);
+
         console.log("WORKFLOW_API_URL:", WORKFLOW_API_URL);
         console.log("WORKFLOW_DEFINITION_ID:", WORKFLOW_DEFINITION_ID);
         console.log("WORKFLOW_ENVIRONMENT_ID:", WORKFLOW_ENVIRONMENT_ID);
 
-        const finalUrl =`${WORKFLOW_API_URL}?environmentId=${WORKFLOW_ENVIRONMENT_ID}`;
+        const finalUrl =
+            `${WORKFLOW_API_URL}?environmentId=${WORKFLOW_ENVIRONMENT_ID}`;
 
-console.log("Calling:", finalUrl);
+        console.log("Calling:", finalUrl);
 
         res.status(500).json({
 

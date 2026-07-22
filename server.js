@@ -90,7 +90,7 @@ app.post("/analyzeDispute", (req, res) => {
 
     switch (invoice.disputeScenario) {
 
-        case "DISCOUNT_NOT_APPLIED":
+        case "Discount Missing":
 
             response.disputeValid = true;
             response.rootCause = "Discount Missing";

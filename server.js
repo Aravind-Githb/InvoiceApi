@@ -166,6 +166,7 @@ app.post("/analyzeDispute", (req, res) => {
 
     // Default response
 let response = {
+    CustomerName: invoice.customerName,
     disputeValid: false,
     rootCause: "No Issue",
     recommendedAction: "No Action Required",
@@ -190,7 +191,7 @@ if (
     const discountAmount =
         invoice.productAmount *
         invoice.contractDiscountPercent / 100;
-
+    response.CustomerName = invoice.customerName;
     response.disputeValid = true;
     response.rootCause = "Discount Missing";
     response.recommendedAction = "Generate Revised Invoice";
@@ -214,7 +215,7 @@ if (
 else if (
     complaint.includes("installation")
 ) {
-
+    response.CustomerName = invoice.customerName
     response.disputeValid = true;
     response.rootCause = "Installation Fee Included";
     response.recommendedAction = "Explain Charges";
@@ -232,7 +233,7 @@ else if (
     complaint.includes("charged twice") ||
     complaint.includes("double charge")
 ) {
-
+    response.CustomerName = invoice.customerName
     response.disputeValid = true;
     response.rootCause = "Duplicate Charge";
     response.recommendedAction = "Refund Customer";
@@ -253,7 +254,7 @@ else if (
     complaint.includes("tax") ||
     complaint.includes("gst")
 ) {
-
+    response.CustomerName = invoice.customerName
     response.disputeValid = true;
     response.rootCause = "Incorrect Tax";
     response.recommendedAction = "Generate Revised Invoice";
@@ -285,6 +286,7 @@ else if (
     complaint.includes("quantity") ||
     complaint.includes("more items") ||
     complaint.includes("extra items") ||
+    complaint.includes("extra") ||
     complaint.includes("billed more") ||
     complaint.includes("wrong quantity")||
     complaint.includes("quantites")
@@ -297,7 +299,7 @@ else if (
     // Calculate refund amount for extra quantity
     const refundAmount =
         extraQuantity * invoice.unitPrice;
-
+    response.CustomerName = invoice.customerName
     response.disputeValid = true;
     response.rootCause = "Quantity Mismatch";
     response.recommendedAction = "Generate Revised Invoice";

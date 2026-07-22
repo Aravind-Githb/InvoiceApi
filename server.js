@@ -65,6 +65,7 @@ app.get("/invoices/:invoiceNumber", (req, res) => {
 app.post("/analyzeDispute", (req, res) => {
 
     const { invoiceNumber, customerComplaint } = req.body;
+    const complaint = customerComplaint.toLowerCase();
 
     const invoice = invoices.find(
         inv => inv.invoiceNumber === invoiceNumber
@@ -77,91 +78,254 @@ app.post("/analyzeDispute", (req, res) => {
         });
     }
 
-    let response = {
-        disputeValid: false,
-        rootCause: "No Issue",
-        recommendedAction: "No Action Required",
-        resolutionStatus: "Rejected",
-        revisedInvoiceAmount: invoice.invoiceAmount,
-        refundAmount: 0,
-        financeNotificationRequired: false,
-        customerMessage: "No billing issue was found."
-    };
+    // let response = {
+    //     disputeValid: false,
+    //     rootCause: "No Issue",
+    //     recommendedAction: "No Action Required",
+    //     resolutionStatus: "Rejected",
+    //     revisedInvoiceAmount: invoice.invoiceAmount,
+    //     refundAmount: 0,
+    //     financeNotificationRequired: false,
+    //     customerMessage: "No billing issue was found."
+    // };
 
-    switch (invoice.disputeScenario) {
+    // switch (invoice.disputeScenario) {
 
-        case "Discount Missing":
+    //     case "Discount Missing":
 
-            response.disputeValid = true;
-            response.rootCause = "Discount Missing";
-            response.recommendedAction = "Generate Revised Invoice";
-            response.resolutionStatus = "Resolved";
+    //         response.disputeValid = true;
+    //         response.rootCause = "Discount Missing";
+    //         response.recommendedAction = "Generate Revised Invoice";
+    //         response.resolutionStatus = "Resolved";
 
-            response.revisedInvoiceAmount =
-                invoice.invoiceAmount - invoice.discountAmount;
+    //         response.revisedInvoiceAmount =
+    //             invoice.invoiceAmount - invoice.discountAmount;
 
-            response.refundAmount = invoice.discountAmount;
+    //         response.refundAmount = invoice.discountAmount;
 
-            response.financeNotificationRequired =
-                invoice.paymentStatus === "Paid";
+    //         response.financeNotificationRequired =
+    //             invoice.paymentStatus === "Paid";
 
-            response.customerMessage =
-                `Your contractual discount of ₹${invoice.discountAmount} was not applied. A revised invoice has been generated.`;
+    //         response.customerMessage =
+    //             `Your contractual discount of ₹${invoice.discountAmount} was not applied. A revised invoice has been generated.`;
 
-            break;
+    //         break;
 
-        case "INSTALLATION_FEE":
+    //     case "INSTALLATION_FEE":
 
-            response.disputeValid = true;
-            response.rootCause = "Installation Fee Included";
-            response.recommendedAction = "Explain Charges";
-            response.resolutionStatus = "Explained";
+    //         response.disputeValid = true;
+    //         response.rootCause = "Installation Fee Included";
+    //         response.recommendedAction = "Explain Charges";
+    //         response.resolutionStatus = "Explained";
 
-            response.customerMessage =
-                `₹${invoice.installationFee} was charged for installation services as per your agreement.`;
+    //         response.customerMessage =
+    //             `₹${invoice.installationFee} was charged for installation services as per your agreement.`;
 
-            break;
+    //         break;
 
-        case "DUPLICATE_CHARGE":
+    //     case "DUPLICATE_CHARGE":
 
-            response.disputeValid = true;
-            response.rootCause = "Duplicate Charge";
-            response.recommendedAction = "Refund Customer";
-            response.resolutionStatus = "Resolved";
+    //         response.disputeValid = true;
+    //         response.rootCause = "Duplicate Charge";
+    //         response.recommendedAction = "Refund Customer";
+    //         response.resolutionStatus = "Resolved";
 
-            response.refundAmount = invoice.duplicateAmount;
+    //         response.refundAmount = invoice.duplicateAmount;
 
-            response.financeNotificationRequired = true;
+    //         response.financeNotificationRequired = true;
 
-            response.customerMessage =
-                `A duplicate charge of ₹${invoice.duplicateAmount} was detected. Finance has been notified for refund processing.`;
+    //         response.customerMessage =
+    //             `A duplicate charge of ₹${invoice.duplicateAmount} was detected. Finance has been notified for refund processing.`;
 
-            break;
+    //         break;
 
-        case "TAX_ERROR":
+    //     case "TAX_ERROR":
 
-            response.disputeValid = true;
-            response.rootCause = "Incorrect Tax";
-            response.recommendedAction = "Generate Revised Invoice";
-            response.resolutionStatus = "Resolved";
+    //         response.disputeValid = true;
+    //         response.rootCause = "Incorrect Tax";
+    //         response.recommendedAction = "Generate Revised Invoice";
+    //         response.resolutionStatus = "Resolved";
 
-            response.revisedInvoiceAmount =
-                invoice.invoiceAmount - invoice.taxDifference;
+    //         response.revisedInvoiceAmount =
+    //             invoice.invoiceAmount - invoice.taxDifference;
 
-            response.refundAmount = invoice.taxDifference;
+    //         response.refundAmount = invoice.taxDifference;
 
-            response.customerMessage =
-                `Incorrect tax calculation was identified. Revised invoice generated.`;
+    //         response.customerMessage =
+    //             `Incorrect tax calculation was identified. Revised invoice generated.`;
 
-            break;
+    //         break;
 
-        default:
+    //     default:
 
-            response.customerMessage =
-                "No billing discrepancy was detected.";
-    }
+    //         response.customerMessage =
+    //             "No billing discrepancy was detected.";
+    // }
 
-    res.json(response);
+    // res.json(response);
+
+    // Default response
+let response = {
+    disputeValid: false,
+    rootCause: "No Issue",
+    recommendedAction: "No Action Required",
+    resolutionStatus: "Rejected",
+    revisedInvoiceAmount: invoice.invoiceAmount,
+    refundAmount: 0,
+    financeNotificationRequired: false,
+    customerMessage: "No billing issue was found.",
+};
+
+// -----------------------------
+// Discount Missing
+// -----------------------------
+if (
+    (complaint.includes("discount") ||
+     complaint.includes("offer") ||
+     complaint.includes("contract discount") ||
+     complaint.includes("10%")) &&
+    invoice.discountAppliedPercent < invoice.contractDiscountPercent
+) {
+
+    const discountAmount =
+        invoice.productAmount *
+        invoice.contractDiscountPercent / 100;
+
+    response.disputeValid = true;
+    response.rootCause = "Discount Missing";
+    response.recommendedAction = "Generate Revised Invoice";
+    response.resolutionStatus = "Resolved";
+
+    response.revisedInvoiceAmount =
+        invoice.invoiceAmount - discountAmount;
+
+    response.refundAmount = discountAmount;
+
+    response.financeNotificationRequired =
+        invoice.paymentStatus === "Paid";
+
+    response.customerMessage =
+        `Your contractual discount of ₹${discountAmount} was not applied. A revised invoice has been generated.`;
+}
+
+// -----------------------------
+// Installation Fee
+// -----------------------------
+else if (
+    complaint.includes("installation")
+) {
+
+    response.disputeValid = true;
+    response.rootCause = "Installation Fee Included";
+    response.recommendedAction = "Explain Charges";
+    response.resolutionStatus = "Explained";
+
+    response.customerMessage =
+        `₹${invoice.installationFee} was charged for installation services as per your agreement.`;
+}
+
+// -----------------------------
+// Duplicate Charge
+// -----------------------------
+else if (
+    complaint.includes("duplicate") ||
+    complaint.includes("charged twice") ||
+    complaint.includes("double charge")
+) {
+
+    response.disputeValid = true;
+    response.rootCause = "Duplicate Charge";
+    response.recommendedAction = "Refund Customer";
+    response.resolutionStatus = "Resolved";
+
+    response.refundAmount = invoice.invoiceAmount;
+
+    response.financeNotificationRequired = true;
+
+    response.customerMessage =
+        "A duplicate charge was detected. Finance has been notified for refund processing.";
+}
+
+// -----------------------------
+// Tax Error
+// -----------------------------
+else if (
+    complaint.includes("tax") ||
+    complaint.includes("gst")
+) {
+
+    response.disputeValid = true;
+    response.rootCause = "Incorrect Tax";
+    response.recommendedAction = "Generate Revised Invoice";
+    response.resolutionStatus = "Resolved";
+
+    const correctTax =
+        (invoice.productAmount -
+         (invoice.productAmount * invoice.contractDiscountPercent / 100))
+        * invoice.taxPercent / 100;
+
+    const revisedAmount =
+        invoice.productAmount -
+        (invoice.productAmount * invoice.contractDiscountPercent / 100) +
+        correctTax;
+
+    response.revisedInvoiceAmount = revisedAmount;
+
+    response.refundAmount =
+        invoice.invoiceAmount - revisedAmount;
+
+    response.customerMessage =
+        "Incorrect tax calculation was identified. A revised invoice has been generated.";
+}
+
+// -----------------------------
+// Quantity Mismatch
+// -----------------------------
+else if (
+    complaint.includes("quantity") ||
+    complaint.includes("more items") ||
+    complaint.includes("extra items") ||
+    complaint.includes("billed more") ||
+    complaint.includes("wrong quantity")||
+    complaint.includes("quantites")
+) {
+
+    // Calculate extra quantity billed
+    const extraQuantity =
+        invoice.billedQuantity - invoice.orderedQuantity;
+
+    // Calculate refund amount for extra quantity
+    const refundAmount =
+        extraQuantity * invoice.unitPrice;
+
+    response.disputeValid = true;
+    response.rootCause = "Quantity Mismatch";
+    response.recommendedAction = "Generate Revised Invoice";
+    response.resolutionStatus = "Resolved";
+
+    // Revised invoice amount after removing extra quantity
+    response.revisedInvoiceAmount =
+        invoice.invoiceAmount - (refundAmount * (1 + invoice.taxPercent / 100));
+
+    response.refundAmount = refundAmount;
+
+    response.financeNotificationRequired =
+        invoice.paymentStatus === "Paid";
+
+    response.customerMessage =
+        `We identified that ${invoice.billedQuantity} items were billed instead of ${invoice.orderedQuantity}. A revised invoice has been generated and the extra charge of ₹${refundAmount} will be adjusted.`;
+}
+
+// -----------------------------
+// Unknown Complaint
+// -----------------------------
+else {
+
+    response.customerMessage =
+        "We couldn't identify the type of dispute. Please provide more details about your complaint.";
+
+}
+res.json(response);
 
 });
 

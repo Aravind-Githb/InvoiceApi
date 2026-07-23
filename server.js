@@ -452,6 +452,17 @@ app.post("/startWorkflow", async (req, res) => {
 
 });
 
+app.post("/mcp", async (req, res) => {
+    await transport.handleRequest(req, res, req.body);
+});
+
+app.get("/mcp", async (req, res) => {
+    await transport.handleRequest(req, res);
+});
+
+app.delete("/mcp", async (req, res) => {
+    await transport.handleRequest(req, res);
+});
 
 app.listen(3000, () => {
     console.log("Server running on port 3000");

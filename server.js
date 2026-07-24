@@ -3,10 +3,17 @@ const fs = require("fs");
 const axios = require("axios");
 const basicAuth = require("express-basic-auth");
 require("dotenv").config();
+const { StreamableHTTPServerTransport } = require("./node_modules/@modelcontextprotocol/sdk/dist/cjs/server/streamableHttp.js");
+const { z } = require("zod");
+
 
 const app = express();
-
 app.use(express.json());
+
+const transport = new StreamableHTTPServerTransport({
+    sessionIdGenerator: undefined
+});
+
 
 const data = JSON.parse(fs.readFileSync("invoices.json", "utf8"));
 
@@ -19,6 +26,9 @@ app.use(
         challenge: true
     })
 );
+
+
+
 
 const invoices = data.invoices;
 
@@ -77,393 +87,292 @@ app.post("/analyzeDispute", (req, res) => {
             customerMessage: "Invoice not found."
         });
     }
-
-    // let response = {
-    //     disputeValid: false,
-    //     rootCause: "No Issue",
-    //     recommendedAction: "No Action Required",
-    //     resolutionStatus: "Rejected",
-    //     revisedInvoiceAmount: invoice.invoiceAmount,
-    //     refundAmount: 0,
-    //     financeNotificationRequired: false,
-    //     customerMessage: "No billing issue was found."
-    // };
-
-    // switch (invoice.disputeScenario) {
-
-    //     case "Discount Missing":
-
-    //         response.disputeValid = true;
-    //         response.rootCause = "Discount Missing";
-    //         response.recommendedAction = "Generate Revised Invoice";
-    //         response.resolutionStatus = "Resolved";
-
-    //         response.revisedInvoiceAmount =
-    //             invoice.invoiceAmount - invoice.discountAmount;
-
-    //         response.refundAmount = invoice.discountAmount;
-
-    //         response.financeNotificationRequired =
-    //             invoice.paymentStatus === "Paid";
-
-    //         response.customerMessage =
-    //             `Your contractual discount of ₹${invoice.discountAmount} was not applied. A revised invoice has been generated.`;
-
-    //         break;
-
-    //     case "INSTALLATION_FEE":
-
-    //         response.disputeValid = true;
-    //         response.rootCause = "Installation Fee Included";
-    //         response.recommendedAction = "Explain Charges";
-    //         response.resolutionStatus = "Explained";
-
-    //         response.customerMessage =
-    //             `₹${invoice.installationFee} was charged for installation services as per your agreement.`;
-
-    //         break;
-
-    //     case "DUPLICATE_CHARGE":
-
-    //         response.disputeValid = true;
-    //         response.rootCause = "Duplicate Charge";
-    //         response.recommendedAction = "Refund Customer";
-    //         response.resolutionStatus = "Resolved";
-
-    //         response.refundAmount = invoice.duplicateAmount;
-
-    //         response.financeNotificationRequired = true;
-
-    //         response.customerMessage =
-    //             `A duplicate charge of ₹${invoice.duplicateAmount} was detected. Finance has been notified for refund processing.`;
-
-    //         break;
-
-    //     case "TAX_ERROR":
-
-    //         response.disputeValid = true;
-    //         response.rootCause = "Incorrect Tax";
-    //         response.recommendedAction = "Generate Revised Invoice";
-    //         response.resolutionStatus = "Resolved";
-
-    //         response.revisedInvoiceAmount =
-    //             invoice.invoiceAmount - invoice.taxDifference;
-
-    //         response.refundAmount = invoice.taxDifference;
-
-    //         response.customerMessage =
-    //             `Incorrect tax calculation was identified. Revised invoice generated.`;
-
-    //         break;
-
-    //     default:
-
-    //         response.customerMessage =
-    //             "No billing discrepancy was detected.";
-    // }
-
-    // res.json(response);
-
-    // Default response
-let response = {
-    CustomerName: invoice.customerName,
-    disputeValid: false,
-    rootCause: "No Issue",
-    recommendedAction: "No Action Required",
-    resolutionStatus: "Rejected",
-    revisedInvoiceAmount: invoice.invoiceAmount,
-    refundAmount: 0,
-    financeNotificationRequired: false,
-    customerMessage: "No billing issue was found.",
-};
+    let response = {
+        CustomerName: invoice.customerName,
+        disputeValid: false,
+        rootCause: "No Issue",
+        recommendedAction: "No Action Required",
+        resolutionStatus: "Rejected",
+        revisedInvoiceAmount: invoice.invoiceAmount,
+        refundAmount: 0,
+        financeNotificationRequired: false,
+        customerMessage: "No billing issue was found.",
+    };
 
 // -----------------------------
 // Discount Missing
 // -----------------------------
-if (
-    (complaint.includes("discount") ||
-     complaint.includes("offer") ||
-     complaint.includes("contract discount") ||
-     complaint.includes("10%")) &&
-    invoice.discountAppliedPercent < invoice.contractDiscountPercent
-) {
+        if (
+            (complaint.includes("discount") ||
+            complaint.includes("offer") ||
+            complaint.includes("contract discount") ||
+            complaint.includes("10%")) &&
+            invoice.discountAppliedPercent < invoice.contractDiscountPercent
+        ) {
 
-    const discountAmount =
-        invoice.productAmount *
-        invoice.contractDiscountPercent / 100;
-    response.CustomerName = invoice.customerName;
-    response.disputeValid = true;
-    response.rootCause = "Discount Missing";
-    response.recommendedAction = "Generate Revised Invoice";
-    response.resolutionStatus = "Resolved";
+            const discountAmount =
+                invoice.productAmount *
+                invoice.contractDiscountPercent / 100;
+            response.CustomerName = invoice.customerName;
+            response.disputeValid = true;
+            response.rootCause = "Discount Missing";
+            response.recommendedAction = "Generate Revised Invoice";
+            response.resolutionStatus = "Resolved";
 
-    response.revisedInvoiceAmount =
-        invoice.invoiceAmount - discountAmount;
+            response.revisedInvoiceAmount =
+                invoice.invoiceAmount - discountAmount;
 
-    response.refundAmount = discountAmount;
+            response.refundAmount = discountAmount;
 
-    response.financeNotificationRequired =
-        invoice.paymentStatus === "Paid";
+            response.financeNotificationRequired =
+                invoice.paymentStatus === "Paid";
 
-    response.customerMessage =
-        `Your contractual discount of ₹${discountAmount} was not applied. A revised invoice has been generated.`;
-}
+            response.customerMessage =
+                `Your contractual discount of ₹${discountAmount} was not applied. A revised invoice has been generated.`;
+        }
 
-// -----------------------------
-// Installation Fee
-// -----------------------------
-else if (
-    complaint.includes("installation")
-) {
-    response.CustomerName = invoice.customerName
-    response.disputeValid = true;
-    response.rootCause = "Installation Fee Included";
-    response.recommendedAction = "Explain Charges";
-    response.resolutionStatus = "Explained";
+        // -----------------------------
+        // Installation Fee
+        // -----------------------------
+        else if (
+            complaint.includes("installation")
+        ) {
+            response.CustomerName = invoice.customerName
+            response.disputeValid = true;
+            response.rootCause = "Installation Fee Included";
+            response.recommendedAction = "Explain Charges";
+            response.resolutionStatus = "Explained";
 
-    response.customerMessage =
-        `₹${invoice.installationFee} was charged for installation services as per your agreement.`;
-}
+            response.customerMessage =
+                `₹${invoice.installationFee} was charged for installation services as per your agreement.`;
+        }
 
-// -----------------------------
-// Duplicate Charge
-// -----------------------------
-else if (
-    complaint.includes("duplicate") ||
-    complaint.includes("charged twice") ||
-    complaint.includes("double charge")
-) {
-    response.CustomerName = invoice.customerName
-    response.disputeValid = true;
-    response.rootCause = "Duplicate Charge";
-    response.recommendedAction = "Refund Customer";
-    response.resolutionStatus = "Resolved";
+        // -----------------------------
+        // Duplicate Charge
+        // -----------------------------
+        else if (
+            complaint.includes("duplicate") ||
+            complaint.includes("charged twice") ||
+            complaint.includes("double charge")
+        ) {
+            response.CustomerName = invoice.customerName
+            response.disputeValid = true;
+            response.rootCause = "Duplicate Charge";
+            response.recommendedAction = "Refund Customer";
+            response.resolutionStatus = "Resolved";
 
-    response.refundAmount = invoice.invoiceAmount;
+            response.refundAmount = invoice.invoiceAmount;
 
-    response.financeNotificationRequired = true;
+            response.financeNotificationRequired = true;
 
-    response.customerMessage =
-        "A duplicate charge was detected. Finance has been notified for refund processing.";
-}
+            response.customerMessage =
+                "A duplicate charge was detected. Finance has been notified for refund processing.";
+        }
 
-// -----------------------------
-// Tax Error
-// -----------------------------
-else if (
-    complaint.includes("tax") ||
-    complaint.includes("gst")
-) {
-    response.CustomerName = invoice.customerName
-    response.disputeValid = true;
-    response.rootCause = "Incorrect Tax";
-    response.recommendedAction = "Generate Revised Invoice";
-    response.resolutionStatus = "Resolved";
+        // -----------------------------
+        // Tax Error
+        // -----------------------------
+        else if (
+            complaint.includes("tax") ||
+            complaint.includes("gst")
+        ) {
+            response.CustomerName = invoice.customerName
+            response.disputeValid = true;
+            response.rootCause = "Incorrect Tax";
+            response.recommendedAction = "Generate Revised Invoice";
+            response.resolutionStatus = "Resolved";
 
-    const correctTax =
-        (invoice.productAmount -
-         (invoice.productAmount * invoice.contractDiscountPercent / 100))
-        * invoice.taxPercent / 100;
+            const correctTax =
+                (invoice.productAmount -
+                (invoice.productAmount * invoice.contractDiscountPercent / 100))
+                * invoice.taxPercent / 100;
 
-    const revisedAmount =
-        invoice.productAmount -
-        (invoice.productAmount * invoice.contractDiscountPercent / 100) +
-        correctTax;
+            const revisedAmount =
+                invoice.productAmount -
+                (invoice.productAmount * invoice.contractDiscountPercent / 100) +
+                correctTax;
 
-    response.revisedInvoiceAmount = revisedAmount;
+            response.revisedInvoiceAmount = revisedAmount;
 
-    response.refundAmount =
-        invoice.invoiceAmount - revisedAmount;
+            response.refundAmount =
+                invoice.invoiceAmount - revisedAmount;
 
-    response.customerMessage =
-        "Incorrect tax calculation was identified. A revised invoice has been generated.";
-}
+            response.customerMessage =
+                "Incorrect tax calculation was identified. A revised invoice has been generated.";
+        }
 
-// -----------------------------
-// Quantity Mismatch
-// -----------------------------
-else if (
-    complaint.includes("quantity") ||
-    complaint.includes("more items") ||
-    complaint.includes("extra items") ||
-    complaint.includes("extra") ||
-    complaint.includes("billed more") ||
-    complaint.includes("wrong quantity")||
-    complaint.includes("quantites")
-) {
+        // -----------------------------
+        // Quantity Mismatch
+        // -----------------------------
+        else if (
+            complaint.includes("quantity") ||
+            complaint.includes("more items") ||
+            complaint.includes("extra items") ||
+            complaint.includes("extra") ||
+            complaint.includes("billed more") ||
+            complaint.includes("wrong quantity")||
+            complaint.includes("quantites")
+        ) {
 
-    // Calculate extra quantity billed
-    const extraQuantity =
-        invoice.billedQuantity - invoice.orderedQuantity;
+            // Calculate extra quantity billed
+            const extraQuantity =
+                invoice.billedQuantity - invoice.orderedQuantity;
 
-    // Calculate refund amount for extra quantity
-    const refundAmount =
-        extraQuantity * invoice.unitPrice;
-    response.CustomerName = invoice.customerName
-    response.disputeValid = true;
-    response.rootCause = "Quantity Mismatch";
-    response.recommendedAction = "Generate Revised Invoice";
-    response.resolutionStatus = "Resolved";
+            // Calculate refund amount for extra quantity
+            const refundAmount =
+                extraQuantity * invoice.unitPrice;
+            response.CustomerName = invoice.customerName
+            response.disputeValid = true;
+            response.rootCause = "Quantity Mismatch";
+            response.recommendedAction = "Generate Revised Invoice";
+            response.resolutionStatus = "Resolved";
 
-    // Revised invoice amount after removing extra quantity
-    response.revisedInvoiceAmount =
-        invoice.invoiceAmount - (refundAmount * (1 + invoice.taxPercent / 100));
+            // Revised invoice amount after removing extra quantity
+            response.revisedInvoiceAmount =
+                invoice.invoiceAmount - (refundAmount * (1 + invoice.taxPercent / 100));
 
-    response.refundAmount = refundAmount;
+            response.refundAmount = refundAmount;
 
-    response.financeNotificationRequired =
-        invoice.paymentStatus === "Paid";
+            response.financeNotificationRequired =
+                invoice.paymentStatus === "Paid";
 
-    response.customerMessage =
-        `We identified that ${invoice.billedQuantity} items were billed instead of ${invoice.orderedQuantity}. A revised invoice has been generated and the extra charge of ₹${refundAmount} will be adjusted.`;
-}
+            response.customerMessage =
+                `We identified that ${invoice.billedQuantity} items were billed instead of ${invoice.orderedQuantity}. A revised invoice has been generated and the extra charge of ₹${refundAmount} will be adjusted.`;
+        }
 
-// -----------------------------
-// Unknown Complaint
-// -----------------------------
-else {
+        // -----------------------------
+        // Unknown Complaint
+        // -----------------------------
+        else {
 
-    response.customerMessage =
-        "We couldn't identify the type of dispute. Please provide more details about your complaint.";
+            response.customerMessage =
+                "We couldn't identify the type of dispute. Please provide more details about your complaint.";
 
-}
-res.json(response);
+        }
+        res.json(response);
 
-});
+        });
 
 
 // =====================================
 // Trigger SAP Build Process
 // =====================================
 
-app.post("/startWorkflow", async (req, res) => {
+        app.post("/startWorkflow", async (req, res) => {
 
-    try {
+            try {
 
-        const {
-            invoiceNumber,
-            customerComplaint
-        } = req.body;
+                const {
+                    invoiceNumber,
+                    customerComplaint
+                } = req.body;
 
-        //=====================================
-        // Step 1: Get OAuth Access Token
-        //=====================================
-        console.log("Getting OAuth Token...");
-        const tokenResponse = await axios.post(
+                //=====================================
+                // Step 1: Get OAuth Access Token
+                //=====================================
+                console.log("Getting OAuth Token...");
+                const tokenResponse = await axios.post(
 
-            WORKFLOW_API_URL,
+                    WORKFLOW_API_URL,
 
-            "grant_type=client_credentials",
+                    "grant_type=client_credentials",
 
-            {
-                auth: {
-                    username: API_USERNAME,
-                    password: API_PASSWORD
-                },
-                headers: {
-                    "Content-Type": "application/x-www-form-urlencoded"
-                }
+                    {
+                        auth: {
+                            username: API_USERNAME,
+                            password: API_PASSWORD
+                        },
+                        headers: {
+                            "Content-Type": "application/x-www-form-urlencoded"
+                        }
+                    }
+
+                );
+                console.log("OAuth Token Received");
+                const accessToken = tokenResponse.data.access_token;
+
+                console.log("OAuth Token Retrieved Successfully");
+
+                //=====================================
+                // Step 2: Prepare Workflow Payload
+                //=====================================
+
+                const payload = {
+
+                    definitionId: WORKFLOW_DEFINITION_ID,
+
+                    context: {
+
+                        invoiceNumber,
+                        customerComplaint
+
+                    }
+
+                };
+
+                //=====================================
+                // Step 3: Start Workflow
+                //=====================================
+                console.log("Calling Workflow API...");
+
+                const response = await axios.post(
+
+                    `${WORKFLOW_API_URL}?environmentId=${WORKFLOW_ENVIRONMENT_ID}`,
+
+                    payload,
+
+                    {
+
+                        headers: {
+
+                            Authorization: `Bearer ${accessToken}`,
+
+                            "Content-Type": "application/json"
+
+                        }
+
+                    }
+
+                );
+
+                res.json({
+
+                    message: "Workflow Started Successfully",
+
+                    workflowResponse: response.data
+
+                });
+
+                console.log("Workflow Started");
+
+            } catch (error) {
+
+                console.error("Workflow Error:");
+
+                console.error(error.response?.data || error.message);
+
+                console.log("WORKFLOW_API_URL:", WORKFLOW_API_URL);
+                console.log("WORKFLOW_DEFINITION_ID:", WORKFLOW_DEFINITION_ID);
+                console.log("WORKFLOW_ENVIRONMENT_ID:", WORKFLOW_ENVIRONMENT_ID);
+
+                const finalUrl =
+                    `${WORKFLOW_API_URL}?environmentId=${WORKFLOW_ENVIRONMENT_ID}`;
+
+                console.log("Calling:", finalUrl);
+
+                res.status(500).json({
+
+                    message: "Unable to start the workflow",
+
+                    error:
+                        error.response?.data ||
+                        error.message
+
+                });
+
             }
-
-        );
-        console.log("OAuth Token Received");
-        const accessToken = tokenResponse.data.access_token;
-
-        console.log("OAuth Token Retrieved Successfully");
-
-        //=====================================
-        // Step 2: Prepare Workflow Payload
-        //=====================================
-
-        const payload = {
-
-            definitionId: WORKFLOW_DEFINITION_ID,
-
-            context: {
-
-                invoiceNumber,
-                customerComplaint
-
-            }
-
-        };
-
-        //=====================================
-        // Step 3: Start Workflow
-        //=====================================
-        console.log("Calling Workflow API...");
-
-        const response = await axios.post(
-
-            `${WORKFLOW_API_URL}?environmentId=${WORKFLOW_ENVIRONMENT_ID}`,
-
-            payload,
-
-            {
-
-                headers: {
-
-                    Authorization: `Bearer ${accessToken}`,
-
-                    "Content-Type": "application/json"
-
-                }
-
-            }
-
-        );
-
-        res.json({
-
-            message: "Workflow Started Successfully",
-
-            workflowResponse: response.data
 
         });
-
-        console.log("Workflow Started");
-
-    } catch (error) {
-
-        console.error("Workflow Error:");
-
-        console.error(error.response?.data || error.message);
-
-        console.log("WORKFLOW_API_URL:", WORKFLOW_API_URL);
-        console.log("WORKFLOW_DEFINITION_ID:", WORKFLOW_DEFINITION_ID);
-        console.log("WORKFLOW_ENVIRONMENT_ID:", WORKFLOW_ENVIRONMENT_ID);
-
-        const finalUrl =
-            `${WORKFLOW_API_URL}?environmentId=${WORKFLOW_ENVIRONMENT_ID}`;
-
-        console.log("Calling:", finalUrl);
-
-        res.status(500).json({
-
-            message: "Unable to start the workflow",
-
-            error:
-                error.response?.data ||
-                error.message
-
-        });
-
-    }
-
-});
-
-app.post("/mcp", async (req, res) => {
-    await transport.handleRequest(req, res, req.body);
-});
-
-app.get("/mcp", async (req, res) => {
-    await transport.handleRequest(req, res);
-});
-
-app.delete("/mcp", async (req, res) => {
-    await transport.handleRequest(req, res);
-});
-
-app.listen(3000, () => {
-    console.log("Server running on port 3000");
-});
+    app.listen(3000, () => {
+        console.log("Server running on port 3000");
+    });

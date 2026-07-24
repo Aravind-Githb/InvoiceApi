@@ -1,264 +1,264 @@
-require("dotenv").config();
+// require("dotenv").config();
 
-const express = require("express");
-const cors = require("cors");
-const axios = require("axios");
-const { z } = require("zod");
+// const express = require("express");
+// const cors = require("cors");
+// const axios = require("axios");
+// const { z } = require("zod");
 
-// const { McpServer } = require("@modelcontextprotocol/sdk/server/mcp");
-// const { StreamableHTTPServerTransport } = require("@modelcontextprotocol/sdk/server/streamableHttp");
+// // const { McpServer } = require("@modelcontextprotocol/sdk/server/mcp");
+// // const { StreamableHTTPServerTransport } = require("@modelcontextprotocol/sdk/server/streamableHttp");
 
-const {
-    McpServer
-} = require("./node_modules/@modelcontextprotocol/sdk/dist/cjs/server/mcp.js");
+// const {
+//     McpServer
+// } = require("./node_modules/@modelcontextprotocol/sdk/dist/cjs/server/mcp.js");
 
-const {
-    StreamableHTTPServerTransport
-} = require("./node_modules/@modelcontextprotocol/sdk/dist/cjs/server/streamableHttp.js");
+// const {
+//     StreamableHTTPServerTransport
+// } = require("./node_modules/@modelcontextprotocol/sdk/dist/cjs/server/streamableHttp.js");
 
-const app = express();
+// const app = express();
 
-app.use(cors());
-app.use(express.json());
+// app.use(cors());
+// app.use(express.json());
 
-const PORT = process.env.MCP_PORT || 3001;
+// const PORT = process.env.MCP_PORT || 3000;
 
-const INVOICE_API_URL =
-    process.env.INVOICE_API_URL ||
-    "https://invoiceapi-ni8e.onrender.com";
+// const INVOICE_API_URL =
+//     process.env.INVOICE_API_URL ||
+//     "https://invoiceapi-ni8e.onrender.com";
 
-// ===========================================
-// MCP SERVER
-// ===========================================
+// // ===========================================
+// // MCP SERVER
+// // ===========================================
 
-const server = new McpServer({
-    name: "Invoice MCP Server",
-    version: "1.0.0"
-});
+// const server = new McpServer({
+//     name: "Invoice MCP Server",
+//     version: "1.0.0"
+// });
 
-const transport = new StreamableHTTPServerTransport({
-    sessionIdGenerator: undefined
-});
+// const transport = new StreamableHTTPServerTransport({
+//     sessionIdGenerator: undefined
+// });
 
-// ===========================================
-// TOOL 1 : FETCH INVOICE
-// ===========================================
+// // ===========================================
+// // TOOL 1 : FETCH INVOICE
+// // ===========================================
 
-server.registerTool(
-    "fetch_invoice",
-    {
-        title: "Fetch Invoice",
-        description: "Fetch invoice details using invoice number.",
+// server.registerTool(
+//     "fetch_invoice",
+//     {
+//         title: "Fetch Invoice",
+//         description: "Fetch invoice details using invoice number.",
 
-        inputSchema: {
-            invoiceNumber: z.string().describe("Invoice Number")
-        }
-    },
+//         inputSchema: {
+//             invoiceNumber: z.string().describe("Invoice Number")
+//         }
+//     },
 
-    async ({ invoiceNumber }) => {
+//     async ({ invoiceNumber }) => {
 
-        try {
+//         try {
 
-            const response = await axios.get(
-                `${INVOICE_API_URL}/invoices/${invoiceNumber}`
-            );
+//             const response = await axios.get(
+//                 `${INVOICE_API_URL}/invoices/${invoiceNumber}`
+//             );
 
-            return {
-                content: [
-                    {
-                        type: "text",
-                        text: JSON.stringify(response.data, null, 2)
-                    }
-                ]
-            };
+//             return {
+//                 content: [
+//                     {
+//                         type: "text",
+//                         text: JSON.stringify(response.data, null, 2)
+//                     }
+//                 ]
+//             };
 
-        } catch (err) {
+//         } catch (err) {
 
-            return {
+//             return {
 
-                content: [
-                    {
-                        type: "text",
-                        text: `Invoice ${invoiceNumber} not found.`
-                    }
-                ],
+//                 content: [
+//                     {
+//                         type: "text",
+//                         text: `Invoice ${invoiceNumber} not found.`
+//                     }
+//                 ],
 
-                isError: true
+//                 isError: true
 
-            };
+//             };
 
-        }
+//         }
 
-    }
-);
+//     }
+// );
 
-// ===========================================
-// TOOL 2 : ANALYZE DISPUTE
-// ===========================================
+// // ===========================================
+// // TOOL 2 : ANALYZE DISPUTE
+// // ===========================================
 
-server.registerTool(
-    "analyze_dispute",
-    {
-        title: "Analyze Dispute",
-        description: "Analyze a customer dispute using the invoice number and customer complaint.",
+// server.registerTool(
+//     "analyze_dispute",
+//     {
+//         title: "Analyze Dispute",
+//         description: "Analyze a customer dispute using the invoice number and customer complaint.",
 
-        inputSchema: {
-            invoiceNumber: z.string().describe("Invoice Number"),
-            customerComplaint: z.string().describe("Customer Complaint")
-        }
-    },
+//         inputSchema: {
+//             invoiceNumber: z.string().describe("Invoice Number"),
+//             customerComplaint: z.string().describe("Customer Complaint")
+//         }
+//     },
 
-    async ({ invoiceNumber, customerComplaint }) => {
+//     async ({ invoiceNumber, customerComplaint }) => {
 
-        try {
+//         try {
 
-            const response = await axios.post(
-                `${INVOICE_API_URL}/analyzeDispute`,
-                {
-                    invoiceNumber,
-                    customerComplaint
-                }
-            );
+//             const response = await axios.post(
+//                 `${INVOICE_API_URL}/analyzeDispute`,
+//                 {
+//                     invoiceNumber,
+//                     customerComplaint
+//                 }
+//             );
 
-            return {
+//             return {
 
-                content: [
-                    {
-                        type: "text",
-                        text: JSON.stringify(response.data, null, 2)
-                    }
-                ]
+//                 content: [
+//                     {
+//                         type: "text",
+//                         text: JSON.stringify(response.data, null, 2)
+//                     }
+//                 ]
 
-            };
+//             };
 
-        }
+//         }
 
-        catch (err) {
+//         catch (err) {
 
-            return {
+//             return {
 
-                content: [
-                    {
-                        type: "text",
-                        text: err.response?.data?.message ||
-                              "Unable to analyze dispute."
-                    }
-                ],
+//                 content: [
+//                     {
+//                         type: "text",
+//                         text: err.response?.data?.message ||
+//                               "Unable to analyze dispute."
+//                     }
+//                 ],
 
-                isError: true
+//                 isError: true
 
-            };
+//             };
 
-        }
+//         }
 
-    }
-);
+//     }
+// );
 
-// ===========================================
-// MCP ENDPOINTS
-// ===========================================
+// // ===========================================
+// // MCP ENDPOINTS
+// // ===========================================
 
-app.get("/mcp", async (req, res) => {
+// app.get("/mcp", async (req, res) => {
 
-    try {
+//     try {
 
-        await transport.handleRequest(req, res);
+//         await transport.handleRequest(req, res);
 
-    } catch (err) {
+//     } catch (err) {
 
-        console.error(err);
+//         console.error(err);
 
-        if (!res.headersSent) {
+//         if (!res.headersSent) {
 
-            res.status(500).json({
-                error: err.message
-            });
+//             res.status(500).json({
+//                 error: err.message
+//             });
 
-        }
+//         }
 
-    }
+//     }
 
-});
+// });
 
-app.post("/mcp", async (req, res) => {
+// app.post("/mcp", async (req, res) => {
 
-    try {
+//     try {
 
-        await transport.handleRequest(req, res, req.body);
+//         await transport.handleRequest(req, res, req.body);
 
-    } catch (err) {
+//     } catch (err) {
 
-        console.error(err);
+//         console.error(err);
 
-        if (!res.headersSent) {
+//         if (!res.headersSent) {
 
-            res.status(500).json({
-                error: err.message
-            });
+//             res.status(500).json({
+//                 error: err.message
+//             });
 
-        }
+//         }
 
-    }
+//     }
 
-});
+// });
 
-app.delete("/mcp", async (req, res) => {
+// app.delete("/mcp", async (req, res) => {
 
-    try {
+//     try {
 
-        await transport.handleRequest(req, res);
+//         await transport.handleRequest(req, res);
 
-    } catch (err) {
+//     } catch (err) {
 
-        console.error(err);
+//         console.error(err);
 
-        if (!res.headersSent) {
+//         if (!res.headersSent) {
 
-            res.status(500).json({
-                error: err.message
-            });
+//             res.status(500).json({
+//                 error: err.message
+//             });
 
-        }
+//         }
 
-    }
+//     }
 
-});
+// });
 
-// ===========================================
-// HEALTH CHECK
-// ===========================================
+// // ===========================================
+// // HEALTH CHECK
+// // ===========================================
 
-app.get("/", (req, res) => {
+// app.get("/", (req, res) => {
 
-    res.send("Invoice MCP Server Running");
+//     res.send("Invoice MCP Server Running");
 
-});
+// });
 
-// ===========================================
-// START SERVER
-// ===========================================
+// // ===========================================
+// // START SERVER
+// // ===========================================
 
-(async () => {
+// (async () => {
 
-    try {
+//     try {
 
-        await server.connect(transport);
+//         await server.connect(transport);
 
-        app.listen(PORT, () => {
+//         app.listen(PORT, () => {
 
-            console.log("--------------------------------");
-            console.log("Invoice MCP Server Started");
-            console.log(`Port : ${PORT}`);
-            console.log(`MCP Endpoint : http://localhost:${PORT}/mcp`);
-            console.log("--------------------------------");
+//             console.log("--------------------------------");
+//             console.log("Invoice MCP Server Started");
+//             console.log(`Port : ${PORT}`);
+//             console.log(`MCP Endpoint : http://localhost:${PORT}/mcp`);
+//             console.log("--------------------------------");
 
-        });
+//         });
 
-    } catch (err) {
+//     } catch (err) {
 
-        console.error("Unable to start MCP Server");
-        console.error(err);
+//         console.error("Unable to start MCP Server");
+//         console.error(err);
 
-    }
+//     }
 
-})();
+// })();

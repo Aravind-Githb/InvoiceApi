@@ -22,8 +22,7 @@
       "taxDifference": 200000,
       "invoiceAmount": 123900,
       "paymentStatus": "Paid",
-      "disputeStatus": "Open",
-      "notes": "Normalized invoice record. Any dispute type can be tested against this invoice."
+      "disputeStatus": "Open"
     },
     {
       "invoiceNumber": "INV1002",
@@ -47,8 +46,7 @@
       "taxDifference": 40,
       "invoiceAmount": 141600,
       "paymentStatus": "Pending",
-      "disputeStatus": "Open",
-      "notes": "Normalized invoice record. Any dispute type can be tested against this invoice."
+      "disputeStatus": "Open"
     },
     {
       "invoiceNumber": "INV1003",
@@ -72,8 +70,7 @@
       "taxDifference": 12000,
       "invoiceAmount": 135700,
       "paymentStatus": "Pending",
-      "disputeStatus": "Open",
-      "notes": "Normalized invoice record. Any dispute type can be tested against this invoice."
+      "disputeStatus": "Open"
     },
     {
       "invoiceNumber": "INV1004",
@@ -97,8 +94,7 @@
       "taxDifference": 0,
       "invoiceAmount": 230100,
       "paymentStatus": "Paid",
-      "disputeStatus": "Open",
-      "notes": "Normalized invoice record. Any dispute type can be tested against this invoice."
+      "disputeStatus": "Open"
     },
     {
       "invoiceNumber": "INV1005",
@@ -122,8 +118,7 @@
       "taxDifference": 0,
       "invoiceAmount": 147500,
       "paymentStatus": "Pending",
-      "disputeStatus": "Open",
-      "notes": "Normalized invoice record. Any dispute type can be tested against this invoice."
+      "disputeStatus": "Open"
     },
     {
       "invoiceNumber": "INV1006",
@@ -147,8 +142,7 @@
       "taxDifference": 0,
       "invoiceAmount": 153400,
       "paymentStatus": "Paid",
-      "disputeStatus": "Closed",
-      "notes": "Normalized invoice record. Any dispute type can be tested against this invoice."
+      "disputeStatus": "Closed"
     },
     {
       "invoiceNumber": "INV1007",
@@ -172,8 +166,7 @@
       "taxDifference": 340,
       "invoiceAmount": 177000,
       "paymentStatus": "Paid",
-      "disputeStatus": "Open",
-      "notes": "Normalized invoice record. Any dispute type can be tested against this invoice."
+      "disputeStatus": "Open"
     },
     {
       "invoiceNumber": "INV1008",
@@ -197,8 +190,7 @@
       "taxDifference": 0,
       "invoiceAmount": 165200,
       "paymentStatus": "Paid",
-      "disputeStatus": "Open",
-      "notes": "Normalized invoice record. Any dispute type can be tested against this invoice."
+      "disputeStatus": "Open"
     },
     {
       "invoiceNumber": "INV1009",
@@ -222,8 +214,7 @@
       "taxDifference": 0,
       "invoiceAmount": 177000,
       "paymentStatus": "Pending",
-      "disputeStatus": "Open",
-      "notes": "Normalized invoice record. Any dispute type can be tested against this invoice."
+      "disputeStatus": "Open"
     },
     {
       "invoiceNumber": "INV1010",
@@ -247,8 +238,7 @@
       "taxDifference": 0,
       "invoiceAmount": 177000,
       "paymentStatus": "Pending",
-      "disputeStatus": "Open",
-      "notes": "Normalized invoice record. Any dispute type can be tested against this invoice."
+      "disputeStatus": "Open"
     }
   ]
 }

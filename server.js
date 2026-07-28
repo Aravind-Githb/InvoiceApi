@@ -34,14 +34,14 @@ const data = JSON.parse(fs.readFileSync("invoices.json", "utf8"));
 const cors = require("cors");
 app.use(cors());
 
-// app.use(
-//     basicAuth({
-//         users: {
-//             [process.env.API_USERNAME]: process.env.API_PASSWORD
-//         },
-//         challenge: true
-//     })
-// );
+app.use(
+    basicAuth({
+        users: {
+            [process.env.API_USERNAME]: process.env.API_PASSWORD
+        },
+        challenge: true
+    })
+);
 
 
 

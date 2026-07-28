@@ -200,7 +200,7 @@ function analyzeDispute(invoiceNumber, customerComplaint) {
 }
 
 
-function updateDisputeStatus(invoiceNumber, status) {
+function updateDisputeStatus(invoiceNumber, disputeStatus) {
 
     const invoice = invoices.find(
         inv => inv.invoiceNumber === invoiceNumber
@@ -215,7 +215,7 @@ function updateDisputeStatus(invoiceNumber, status) {
 
     }
 
-    invoice.disputeStatus = status;
+    invoice.disputeStatus = disputeStatus;
 
     return {
 

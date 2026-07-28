@@ -101,15 +101,15 @@ server.registerTool(
         description: "Updates the dispute status of an invoice.",
         inputSchema: {
             invoiceNumber: z.string(),
-            status: z.enum(["Open", "In Progress", "Closed"])
+            disputeStatus: z.enum(["Open", "In Progress", "Closed"])
         }
     },
-    async ({ invoiceNumber, status }) => {
+    async ({ invoiceNumber, disputeStatus }) => {
 
         const result =
             disputeService.updateDisputeStatus(
                 invoiceNumber,
-                status
+                disputeStatus
             );
 
         return {
@@ -376,12 +376,12 @@ app.post("/analyzeDispute", async (req, res) => {
 
     try {
 
-        const { invoiceNumber, status } = req.body;
+        const { invoiceNumber, disputeStatus } = req.body;
 
         const result =
             disputeService.updateDisputeStatus(
                 invoiceNumber,
-                status
+                disputeStatus
             );
 
         res.json(result);

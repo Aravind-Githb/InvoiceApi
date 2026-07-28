@@ -200,12 +200,41 @@ function analyzeDispute(invoiceNumber, customerComplaint) {
 }
 
 
+function updateDisputeStatus(invoiceNumber, status) {
+
+    const invoice = invoices.find(
+        inv => inv.invoiceNumber === invoiceNumber
+    );
+
+    if (!invoice) {
+
+        return {
+            success: false,
+            message: "Invoice not found."
+        };
+
+    }
+
+    invoice.disputeStatus = status;
+
+    return {
+
+        success: true,
+
+        invoice
+
+    };
+
+}
+
+
 module.exports = {
 
     getInvoices,
 
     getInvoice,
 
-    analyzeDispute
+    analyzeDispute,
 
+    updateDisputeStatus
 };

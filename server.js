@@ -34,14 +34,14 @@ const data = JSON.parse(fs.readFileSync("invoices.json", "utf8"));
 const cors = require("cors");
 app.use(cors());
 
-app.use(
-    basicAuth({
-        users: {
-            [process.env.API_USERNAME]: process.env.API_PASSWORD
-        },
-        challenge: true
-    })
-);
+// app.use(
+//     basicAuth({
+//         users: {
+//             [process.env.API_USERNAME]: process.env.API_PASSWORD
+//         },
+//         challenge: true
+//     })
+// );
 
 
 
@@ -88,6 +88,37 @@ server.registerTool(
 
             ]
 
+        };
+
+    }
+);
+
+
+server.registerTool(
+    "updateDisputeStatus",
+    {
+        title: "Update Dispute Status",
+        description: "Updates the dispute status of an invoice.",
+        inputSchema: {
+            invoiceNumber: z.string(),
+            status: z.enum(["Open", "In Progress", "Closed"])
+        }
+    },
+    async ({ invoiceNumber, status }) => {
+
+        const result =
+            disputeService.updateDisputeStatus(
+                invoiceNumber,
+                status
+            );
+
+        return {
+            content: [
+                {
+                    type: "text",
+                    text: JSON.stringify(result, null, 2)
+                }
+            ]
         };
 
     }
@@ -337,6 +368,37 @@ app.post("/analyzeDispute", async (req, res) => {
             }
 
         });
+
+
+
+
+        app.post("/updateDisputeStatus", async (req, res) => {
+
+    try {
+
+        const { invoiceNumber, status } = req.body;
+
+        const result =
+            disputeService.updateDisputeStatus(
+                invoiceNumber,
+                status
+            );
+
+        res.json(result);
+
+    }
+
+    catch (err) {
+
+        res.status(500).json({
+
+            error: err.message
+
+        });
+
+    }
+
+});
 
 
 app.all("/mcp", async (req, res) => {

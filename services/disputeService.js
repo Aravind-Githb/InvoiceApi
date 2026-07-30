@@ -228,6 +228,23 @@ function updateDisputeStatus(invoiceNumber, disputeStatus) {
 }
 
 
+function findInvoicesByDisputeStatus(disputeStatus) {
+
+    const result = invoices.filter(
+        invoice =>
+            invoice.disputeStatus.toLowerCase() ===
+            disputeStatus.toLowerCase()
+    );
+
+    return result.map(invoice => ({
+        invoiceNumber: invoice.invoiceNumber,
+        customerName: invoice.customerName,
+        disputeStatus: invoice.disputeStatus,
+        invoiceAmount: invoice.invoiceAmount
+    }));
+}
+
+
 module.exports = {
 
     getInvoices,
@@ -236,5 +253,7 @@ module.exports = {
 
     analyzeDispute,
 
-    updateDisputeStatus
+    updateDisputeStatus,
+
+    findInvoicesByDisputeStatus
 };

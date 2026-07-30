@@ -127,6 +127,53 @@ server.registerTool(
 
 server.registerTool(
 
+    "findInvoicesByDisputeStatus",
+
+    {
+
+        title: "Find Invoices By Dispute Status",
+
+        description:
+            "Returns all invoices that have the specified dispute status such as Open, Closed, Pending, Resolved, or Escalated.",
+
+        inputSchema: {
+
+            disputeStatus: z.string()
+
+        }
+
+    },
+
+    async ({ disputeStatus }) => {
+
+        const result =
+            disputeService.findInvoicesByDisputeStatus(
+                disputeStatus
+            );
+
+        return {
+
+            content: [
+
+                {
+
+                    type: "text",
+
+                    text: JSON.stringify(result, null, 2)
+
+                }
+
+            ]
+
+        };
+
+    }
+
+);
+
+
+server.registerTool(
+
     "analyzeDispute",
 
     {
@@ -401,6 +448,18 @@ app.post("/analyzeDispute", async (req, res) => {
 });
 
 
+app.get("/invoices/disputeStatus/:disputeStatus", (req, res) => {
+
+    const { disputeStatus } = req.params;
+
+    const result =
+        disputeService.findInvoicesByDisputeStatus(disputeStatus);
+
+    res.json(result);
+
+});
+
+
 app.all("/mcp", async (req, res) => {
 
     try {
@@ -455,6 +514,9 @@ app.all("/mcp", async (req, res) => {
     }
 
 });
+
+
+
 
     app.listen(3000, () => {
         console.log("Server running on port 3000");

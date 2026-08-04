@@ -46,7 +46,7 @@
       "taxDifference": 40,
       "invoiceAmount": 141600,
       "paymentStatus": "Pending",
-      "disputeStatus": "Open"
+      "disputeStatus": "pending"
     },
     {
       "invoiceNumber": "INV1003",
@@ -94,7 +94,7 @@
       "taxDifference": 0,
       "invoiceAmount": 230100,
       "paymentStatus": "Paid",
-      "disputeStatus": "Open"
+      "disputeStatus": "pending"
     },
     {
       "invoiceNumber": "INV1005",
@@ -166,7 +166,7 @@
       "taxDifference": 340,
       "invoiceAmount": 177000,
       "paymentStatus": "Paid",
-      "disputeStatus": "Open"
+      "disputeStatus": "resolved"
     },
     {
       "invoiceNumber": "INV1008",
@@ -238,7 +238,7 @@
       "taxDifference": 0,
       "invoiceAmount": 177000,
       "paymentStatus": "Pending",
-      "disputeStatus": "Open"
+      "disputeStatus": "resolved"
     }
   ]
 }
